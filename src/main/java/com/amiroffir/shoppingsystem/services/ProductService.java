@@ -64,4 +64,30 @@ public class ProductService {
             throw e;
         }
     }
+
+    public List<Product> filterProductsByPrice(Double minPrice, Double maxPrice) {
+        try {
+            List<Product> productsList = productRepo.findAllByPriceBetween(minPrice, maxPrice);
+            if (productsList.isEmpty()) {
+                throw new EmptyResultException();
+            }
+            return productsList;
+        } catch (Exception e) {
+            // Log or handle other exceptions
+            throw e;
+        }
+    }
+
+    public List<Product> filterProductsByName(String name) {
+        try {
+            List<Product> productsList = productRepo.findAllByNameContaining(name);
+            if (productsList.isEmpty()) {
+                throw new EmptyResultException();
+            }
+            return productsList;
+        } catch (Exception e) {
+            // Log or handle other exceptions
+            throw e;
+        }
+    }
 }

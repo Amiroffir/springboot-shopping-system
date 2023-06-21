@@ -1,5 +1,6 @@
 package com.amiroffir.shoppingsystem.controllers;
 
+import com.amiroffir.shoppingsystem.enums.FilterTypes;
 import com.amiroffir.shoppingsystem.exceptions.EmptyResultException;
 import com.amiroffir.shoppingsystem.models.Product;
 import com.amiroffir.shoppingsystem.services.ProductService;
@@ -20,16 +21,16 @@ public class ProductController {
     @GetMapping("/products/get")
     public ResponseEntity<List<Product>> getAllProducts() {
         try {
-             List<Product> productsList = productService.getAllProducts();
-                return ResponseEntity.ok(productsList);
+            List<Product> productsList = productService.getAllProducts();
+            return ResponseEntity.ok(productsList);
         } catch (EmptyResultException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             // Log
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @PostMapping("/products/add")
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         try {
@@ -42,6 +43,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @PutMapping("/products/update")
     public ResponseEntity<Product> updateProduct(@RequestBody Product product) {
         try {
@@ -54,16 +56,42 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
     @DeleteMapping("/products/delete/{id}")
     public ResponseEntity<Product> deleteProduct(@PathVariable int id) {
         try {
             productService.deleteProduct(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
             // Log
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    // Get products by price/name
+    @GetMapping("/products/filter")
+    public ResponseEntity<List<Product>> getFilteredProducts(@RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String searchBy) {
+        List<Product> filteredProducts;
+        try {
+            if (searchBy != null && searchBy.equalsIgnoreCase(FilterTypes.PRICE.toString())) {
+                filteredProducts = productService.filterProductsByPrice(minPrice, maxPrice);
+            } else if (searchBy != null && searchBy.equalsIgnoreCase(FilterTypes.NAME.toString())) {
+                filteredProducts = productService.filterProductsByName(name);
+            } else {
+                // If searchBy is not specified or invalid, return all products
+                filteredProducts = productService.getAllProducts();
+            }
+        } catch (EmptyResultException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            // Log
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(filteredProducts);
     }
 }
