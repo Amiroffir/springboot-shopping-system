@@ -10,7 +10,7 @@ import lombok.Data;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-  //  @Column(name = "order_item_id")
+
     private int orderItemId;
 
     @ManyToOne
@@ -21,9 +21,7 @@ public class OrderItem {
     @JoinColumn(name = "product_id")
     private Product product;
 
- //   @Column(name = "quantity")
     private int quantity;
 
-  //  @Column(name = "item_amount")
     private double itemAmount;
 }

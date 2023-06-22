@@ -12,16 +12,14 @@ import java.util.Date;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-   // @Column(name = "order_id")
+
     private int orderId;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
- //   @Column(name = "order_date")
     private Date orderDate;
 
-   // @Column(name = "total_amount")
     private double totalAmount;
 }
