@@ -33,7 +33,7 @@ public class OrderItemController {
         return ResponseEntity.ok(cartItems);
     }
 
-    @PostMapping("/order-items/update")
+    @PutMapping("/order-items/update")
     public ResponseEntity<String> updateCartItem(@RequestBody OrderItemDTO requestDTO, HttpSession session) {
         try {
             orderItemService.updateCartItem(requestDTO, session);
@@ -43,7 +43,7 @@ public class OrderItemController {
         }
     }
 
-    @PostMapping("/order-items/remove")
+    @DeleteMapping("/order-items/remove")
     public ResponseEntity<String> removeCartItem(@RequestBody OrderItemDTO requestDTO, HttpSession session) {
         try {
             orderItemService.removeCartItem(requestDTO, session);
