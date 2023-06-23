@@ -20,7 +20,6 @@ public class OrderService {
     @Autowired
     private OrderRepo orderRepo;
 
-
     public List<Order> getOrdersHistoryByUser(int userId) {
         try {
             List<Order> ordersList = orderRepo.findAllByUserUserId(userId);
@@ -29,25 +28,30 @@ public class OrderService {
             }
             return ordersList;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
 
     public Order addOrder(HttpSession session) {
         try {
-            Order orderToAdd = new Order();
-            orderToAdd.setUser(userService.getCurrentUser(session));
-            orderToAdd.setOrderDate(new Date());
-            orderToAdd.setTotalAmount(orderItemService.getCartTotal(session));
+            Order orderToAdd = createNewOrder(session);
             Order addedOrder = orderRepo.save(orderToAdd);
             orderItemService.addOrderItems(addedOrder, session);
             return addedOrder;
         } catch (EntityNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
+    }
+
+    private Order createNewOrder(HttpSession session) {
+        Order orderToAdd = new Order();
+        orderToAdd.setUser(userService.getCurrentUser(session));
+        orderToAdd.setOrderDate(new Date());
+        orderToAdd.setTotalAmount(orderItemService.getCartTotal(session));
+        return orderToAdd;
     }
 }

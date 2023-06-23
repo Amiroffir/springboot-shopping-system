@@ -1,13 +1,13 @@
 package com.amiroffir.shoppingsystem.services;
 
 import com.amiroffir.shoppingsystem.DTOs.UserResponseDTO;
+import com.amiroffir.shoppingsystem.enums.UserTypes;
 import com.amiroffir.shoppingsystem.exceptions.EmptyResultException;
 import com.amiroffir.shoppingsystem.models.User;
 import com.amiroffir.shoppingsystem.repos.UserRepo;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,47 +22,42 @@ public class UserService {
     public UserResponseDTO register(User user, HttpSession session) {
         try {
             String userEmail = user.getEmail();
-            // Save the user to the database
             if (userRepo.existsByEmail(userEmail)) {
                 throw new RuntimeException("User already exists");
             }
-
-            if (userEmail.contains("admin")) {
-                user.setUserType("Admin");
+            if (userEmail.contains(UserTypes.Admin.getValue())) {
+                user.setUserType(UserTypes.Admin.getValue());
             } else {
-                user.setUserType("Customer");
+                user.setUserType(UserTypes.Customer.getValue());
             }
             User newUser = userRepo.save(user);
             // Set the user in the session
             session.setAttribute(USER_SESSION_ATTRIBUTE, newUser);
             return new UserResponseDTO(newUser.getName(), newUser.getEmail(), newUser.getUserType());
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
 
     public UserResponseDTO login(String email, String password, HttpSession session) {
         try {
-            // Find the user by username and password
             User user = userRepo.findByEmailAndPassword(email, password);
-
             if (user != null) {
                 // Set the user in the session
                 session.setAttribute(USER_SESSION_ATTRIBUTE, user);
                 return new UserResponseDTO(user.getName(), user.getEmail(), user.getUserType());
             } else {
-                // Handle invalid login credentials
+                // Handle invalid login
                 throw new RuntimeException("Invalid email or password");
             }
         } catch (EntityNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
-
 
     public User getCurrentUser(HttpSession session) {
         // Get the user from the session
@@ -79,9 +74,9 @@ public class UserService {
             userToUpdate.setPassword(user.getPassword());
             return userRepo.save(userToUpdate);
         } catch (EntityNotFoundException e) {
-            throw e; // Rethrow the EntityNotFoundException
+            throw e;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
@@ -100,9 +95,8 @@ public class UserService {
         } catch (EmptyResultException e) {
             throw e;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
-
     }
 }

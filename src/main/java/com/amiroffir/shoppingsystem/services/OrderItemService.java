@@ -46,11 +46,11 @@ public class OrderItemService {
     }
 
     private List<OrderItemDTO> getOrCreateCart(HttpSession session) {
-        List<OrderItemDTO> cartItems = (List<OrderItemDTO>) session.getAttribute(CART_SESSION_ATTRIBUTE);
-        if (cartItems == null) {
-            cartItems = new ArrayList<>();
-            session.setAttribute(CART_SESSION_ATTRIBUTE, cartItems);
-        }
+            List<OrderItemDTO> cartItems = (List<OrderItemDTO>) session.getAttribute(CART_SESSION_ATTRIBUTE);
+            if (cartItems == null) {
+                cartItems = new ArrayList<>();
+                session.setAttribute(CART_SESSION_ATTRIBUTE, cartItems);
+            }
         return cartItems;
     }
 

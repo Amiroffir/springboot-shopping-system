@@ -22,7 +22,7 @@ public class ProductService {
             }
             return productsList;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
@@ -46,9 +46,9 @@ public class ProductService {
             }
             return productRepo.save(product);
         } catch (EntityNotFoundException e) {
-            throw e; // Rethrow the EntityNotFoundException
+            throw e;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
@@ -73,7 +73,7 @@ public class ProductService {
             }
             return productsList;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
@@ -86,7 +86,7 @@ public class ProductService {
             }
             return productsList;
         } catch (Exception e) {
-            // Log or handle other exceptions
+            // Log
             throw e;
         }
     }
