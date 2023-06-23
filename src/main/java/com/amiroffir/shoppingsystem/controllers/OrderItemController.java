@@ -1,7 +1,6 @@
 package com.amiroffir.shoppingsystem.controllers;
 
 import com.amiroffir.shoppingsystem.DTOs.OrderItemDTO;
-import com.amiroffir.shoppingsystem.models.OrderItem;
 import com.amiroffir.shoppingsystem.services.OrderItemService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,38 +17,42 @@ public class OrderItemController {
     private OrderItemService orderItemService;
 
     @PostMapping("/order-items/add")
-    public ResponseEntity<String> addToCart(@RequestBody OrderItemDTO requestDTO, HttpSession session) {
+    public ResponseEntity<List<OrderItemDTO>> addToCart(@RequestBody OrderItemDTO orderItemDTO, HttpSession session) {
         try {
-            orderItemService.addToCart(requestDTO, session);
-            return ResponseEntity.ok("Item added to cart.");
+            List<OrderItemDTO> cartItems = orderItemService.addToCart(orderItemDTO, session);
+            return ResponseEntity.ok(cartItems);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add item to cart.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @GetMapping("/order-items/view")
-    public ResponseEntity<List<OrderItem>> viewCart(HttpSession session) {
-        List<OrderItem> cartItems = orderItemService.viewCart(session);
+    public ResponseEntity<List<OrderItemDTO>> viewCart(HttpSession session) {
+        List<OrderItemDTO> cartItems = orderItemService.viewCart(session);
         return ResponseEntity.ok(cartItems);
     }
 
     @PutMapping("/order-items/update")
-    public ResponseEntity<String> updateCartItem(@RequestBody OrderItemDTO requestDTO, HttpSession session) {
+    public ResponseEntity<OrderItemDTO> updateCartItem(@RequestBody OrderItemDTO orderItemDTO, HttpSession session) {
         try {
-            orderItemService.updateCartItem(requestDTO, session);
-            return ResponseEntity.ok("Cart item updated.");
+           OrderItemDTO updatedItem = orderItemService.updateCartItem(orderItemDTO, session);
+           if (updatedItem != null) {
+                return ResponseEntity.ok(updatedItem);
+              } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+              }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update cart item.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @DeleteMapping("/order-items/remove")
-    public ResponseEntity<String> removeCartItem(@RequestBody OrderItemDTO requestDTO, HttpSession session) {
+    public ResponseEntity<Void> removeCartItem(@RequestBody OrderItemDTO orderItemDTO, HttpSession session) {
         try {
-            orderItemService.removeCartItem(requestDTO, session);
-            return ResponseEntity.ok("Cart item removed.");
+            orderItemService.removeCartItem(orderItemDTO, session);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to remove cart item.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 }
