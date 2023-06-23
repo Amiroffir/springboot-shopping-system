@@ -2,7 +2,6 @@ package com.amiroffir.shoppingsystem.DTOs;
 
 public class UserResponseDTO {
 
-
     private String name;
 
     private String email;
