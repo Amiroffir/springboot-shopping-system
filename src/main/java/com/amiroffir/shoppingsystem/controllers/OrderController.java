@@ -22,12 +22,14 @@ public class OrderController {
     public ResponseEntity<List<Order>> getOrdersHistory(@PathVariable int userId) {
         try {
              List<Order> ordersList = orderService.getOrdersHistoryByUser(userId);
+            System.out.println(ordersList.size() + " orders retrieved");
             return ResponseEntity.ok(ordersList);
         } catch (EmptyResultException e) {
+            System.out.println("No orders found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         catch (Exception e) {
-            // Log
+            System.out.println("Error retrieving orders- " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

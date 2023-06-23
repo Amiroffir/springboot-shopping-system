@@ -28,19 +28,23 @@ public class OrderItemController {
 
     @GetMapping("/order-items/view")
     public ResponseEntity<List<OrderItemDTO>> viewCart(HttpSession session) {
-        List<OrderItemDTO> cartItems = orderItemService.viewCart(session);
-        return ResponseEntity.ok(cartItems);
+        try {
+            List<OrderItemDTO> cartItems = orderItemService.viewCart(session);
+            return ResponseEntity.ok(cartItems);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/order-items/update")
     public ResponseEntity<OrderItemDTO> updateCartItem(@RequestBody OrderItemDTO orderItemDTO, HttpSession session) {
         try {
-           OrderItemDTO updatedItem = orderItemService.updateCartItem(orderItemDTO, session);
-           if (updatedItem != null) {
+            OrderItemDTO updatedItem = orderItemService.updateCartItem(orderItemDTO, session);
+            if (updatedItem != null) {
                 return ResponseEntity.ok(updatedItem);
-              } else {
+            } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-              }
+            }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

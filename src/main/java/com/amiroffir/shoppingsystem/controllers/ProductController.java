@@ -70,11 +70,11 @@ public class ProductController {
         }
     }
 
-    // Get products by price/name
+    // Get products by price/name filter (or all products if no filter is specified)
     @GetMapping("/products/filter")
-    public ResponseEntity<List<Product>> getFilteredProducts(@RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) String name,
+    public ResponseEntity<List<Product>> getFilteredProducts(@RequestParam(required = false,defaultValue = "1000") Double maxPrice,
+            @RequestParam(required = false,defaultValue = "0.0") Double minPrice,
+            @RequestParam(required = false, defaultValue = "") String name,
             @RequestParam(required = false) String searchBy) {
         List<Product> filteredProducts;
         try {
