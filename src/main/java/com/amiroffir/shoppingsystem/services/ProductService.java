@@ -13,16 +13,19 @@ import java.util.List;
 public class ProductService {
     @Autowired
     private ProductRepo productRepo;
+    @Autowired
+    private LogService logService;
 
     public List<Product> getAllProducts() {
         try {
             List<Product> productsList = productRepo.findAll();
             if (productsList.isEmpty()) {
+                logService.logInfo("No products found");
                 throw new EmptyResultException();
             }
             return productsList;
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to retrieve products " + e.getMessage());
             throw e;
         }
     }
@@ -32,9 +35,10 @@ public class ProductService {
             Product addedProduct = productRepo.save(product);
             return addedProduct;
         } catch (EntityNotFoundException e) {
+            logService.logError("Unable to add product " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to add product " + e.getMessage());
             throw e;
         }
     }
@@ -42,13 +46,12 @@ public class ProductService {
     public Product updateProduct(Product product) {
         try {
             if(!productRepo.existsById(product.getProductId())){
+                logService.logError("Unable to update product, product not found");
                 throw new EntityNotFoundException();
             }
             return productRepo.save(product);
-        } catch (EntityNotFoundException e) {
-            throw e;
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to update product " + e.getMessage());
             throw e;
         }
     }
@@ -56,11 +59,12 @@ public class ProductService {
     public void deleteProduct(int product) {
         try {
             if (!productRepo.existsById(product)) {
+                logService.logError("Unable to delete product, product not found");
                 throw new EntityNotFoundException();
             }
             productRepo.deleteById(product);
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to delete product " + e.getMessage());
             throw e;
         }
     }
@@ -69,11 +73,12 @@ public class ProductService {
         try {
             List<Product> productsList = productRepo.findAllByPriceBetween(minPrice, maxPrice);
             if (productsList.isEmpty()) {
+                logService.logInfo("No products found in price range " + minPrice + " - " + maxPrice);
                 throw new EmptyResultException();
             }
             return productsList;
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to retrieve products " + e.getMessage());
             throw e;
         }
     }
@@ -82,11 +87,12 @@ public class ProductService {
         try {
             List<Product> productsList = productRepo.findAllByNameContaining(name);
             if (productsList.isEmpty()) {
+                logService.logInfo("No products found with name " + name);
                 throw new EmptyResultException();
             }
             return productsList;
         } catch (Exception e) {
-            // Log
+            logService.logError("Unable to retrieve products " + e.getMessage());
             throw e;
         }
     }

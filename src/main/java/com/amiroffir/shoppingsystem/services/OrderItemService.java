@@ -15,6 +15,9 @@ import java.util.List;
 public class OrderItemService {
     @Autowired
     private OrderItemRepo orderItemRepo;
+    @Autowired
+    private LogService logService;
+
     private static final String CART_SESSION_ATTRIBUTE = "cart";
 
     public List<OrderItemDTO> addToCart(OrderItemDTO orderItem, HttpSession session) {
@@ -47,9 +50,11 @@ public class OrderItemService {
 
     private List<OrderItemDTO> getOrCreateCart(HttpSession session) {
             List<OrderItemDTO> cartItems = (List<OrderItemDTO>) session.getAttribute(CART_SESSION_ATTRIBUTE);
+            logService.logInfo("Cart retrieved" + "session id: " + session.getId());
             if (cartItems == null) {
                 cartItems = new ArrayList<>();
                 session.setAttribute(CART_SESSION_ATTRIBUTE, cartItems);
+                logService.logInfo("New cart created" + "session id: " + session.getId());
             }
         return cartItems;
     }
@@ -60,6 +65,7 @@ public class OrderItemService {
         for (OrderItemDTO item : cartItems) {
             total += item.getItemAmount();
         }
+        logService.logInfo("Cart total: " + total + "session id: " + session.getId());
         return total;
     }
 
@@ -76,9 +82,12 @@ public class OrderItemService {
                 orderItems.add(orderItem);
             }
             orderItemRepo.saveAll(orderItems);
+            logService.logInfo("Order items added to DB" + "session id: " + session.getId());
             // Clear cart in session after adding order items to DB
             session.setAttribute(CART_SESSION_ATTRIBUTE, null);
+            logService.logInfo("Cart cleared" + "session id: " + session.getId());
         } catch (Exception e) {
+            logService.logError("Failed to add order items" + "session id: " + session.getId());
             System.out.println("Failed to add order items.");
         }
     }

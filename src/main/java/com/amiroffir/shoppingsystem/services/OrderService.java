@@ -19,16 +19,19 @@ public class OrderService {
     private UserService userService;
     @Autowired
     private OrderRepo orderRepo;
+    @Autowired
+    private LogService logService;
 
     public List<Order> getOrdersHistoryByUser(int userId) {
         try {
             List<Order> ordersList = orderRepo.findAllByUserUserId(userId);
             if (ordersList.isEmpty()) {
+                logService.logInfo("Failed to get orders history, no orders found");
                 throw new EmptyResultException();
             }
             return ordersList;
         } catch (Exception e) {
-            // Log
+            logService.logError("Failed to get orders history" + e.getMessage());
             throw e;
         }
     }
@@ -38,11 +41,14 @@ public class OrderService {
             Order orderToAdd = createNewOrder(session);
             Order addedOrder = orderRepo.save(orderToAdd);
             orderItemService.addOrderItems(addedOrder, session);
+            logService.logInfo("Order added successfully");
+            logService.logInfo("Order id: " + addedOrder.getOrderId() + "and items: added successfully");
             return addedOrder;
         } catch (EntityNotFoundException e) {
+            logService.logError("Failed to add order, user not found");
             throw e;
         } catch (Exception e) {
-            // Log
+            logService.logError("Failed to add order" + e.getMessage());
             throw e;
         }
     }
